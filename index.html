@@ -1,75 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Red Moon 🩸🌙</title>
-  <style>
-    body {
-      background: linear-gradient(black, #1a001a);
-      color: #ff4d6d;
-      font-family: Arial;
-      text-align: center;
-    }
-    h1 {
-      margin-top: 20px;
-      font-size: 40px;
-    }
-    #chat {
-      width: 80%;
-      height: 300px;
-      margin: auto;
-      background: #0d0d0d;
-      border-radius: 10px;
-      padding: 10px;
-      overflow-y: scroll;
-      text-align: left;
-    }
-    input {
-      width: 60%;
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-    }
-    button {
-      padding: 10px;
-      border-radius: 10px;
-      background: #ff4d6d;
-      border: none;
-      color: white;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Luna Roja Chat</title>
+<style>
+body { font-family: Arial; background: #ffe6e6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+#chatContainer { background: #fff; padding: 20px; border-radius: 10px; width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+#messages { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+.message { margin: 5px 0; }
+.user { color: blue; }
+.luna { color: red; }
+</style>
 </head>
 <body>
-
-<h1>🩸 Red Moon 🌙</h1>
-
-<div id="chat"></div>
-<br>
-<input id="mensaje" placeholder="Escribe algo...">
-<button onclick="enviar()">Enviar</button>
-
+<div id="chatContainer">
+  <div id="messages"></div>
+  <input id="userInput" type="text" placeholder="Escribe tu mensaje..." style="width:80%;" />
+  <button onclick="sendMessage()">Enviar</button>
+</div>
 <script>
-async function enviar() {
-  const input = document.getElementById("mensaje");
-  const chat = document.getElementById("chat");
-
-  const userText = input.value;
-  chat.innerHTML += "<p><b>Tú:</b> " + userText + "</p>";
-
-  const respuesta = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ mensaje: userText })
-  });
-
-  const data = await respuesta.json();
-  chat.innerHTML += "<p><b>Red Moon:</b> " + data.respuesta + "</p>";
-
-  input.value = "";
+const messagesDiv = document.getElementById('messages');
+function addMessage(sender, text) {
+  const msg = document.createElement('div');
+  msg.className = 'message ' + sender;
+  msg.textContent = text;
+  messagesDiv.appendChild(msg);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if(!text) return;
+  addMessage('user', text);
+  input.value = '';
+  fetch('/message', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text}) })
+    .then(res => res.json())
+    .then(data => addMessage('luna', data.reply));
 }
 </script>
-
 </body>
 </html>
