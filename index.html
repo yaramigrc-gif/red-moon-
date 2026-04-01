@@ -1,11 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Luna Roja</title>
+  <meta charset="UTF-8">
+  <title>Red Moon 🩸🌙</title>
+  <style>
+    body {
+      background: linear-gradient(black, #1a001a);
+      color: #ff4d6d;
+      font-family: Arial;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+      font-size: 40px;
+    }
+    #chat {
+      width: 80%;
+      height: 300px;
+      margin: auto;
+      background: #0d0d0d;
+      border-radius: 10px;
+      padding: 10px;
+      overflow-y: scroll;
+      text-align: left;
+    }
+    input {
+      width: 60%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+    button {
+      padding: 10px;
+      border-radius: 10px;
+      background: #ff4d6d;
+      border: none;
+      color: white;
+    }
+  </style>
 </head>
 <body>
-    <h1>Bienvenido a Luna Roja</h1>
-    <p>Tu app ya está corriendo 😎</p>
+
+<h1>🩸 Red Moon 🌙</h1>
+
+<div id="chat"></div>
+<br>
+<input id="mensaje" placeholder="Escribe algo...">
+<button onclick="enviar()">Enviar</button>
+
+<script>
+async function enviar() {
+  const input = document.getElementById("mensaje");
+  const chat = document.getElementById("chat");
+
+  const userText = input.value;
+  chat.innerHTML += "<p><b>Tú:</b> " + userText + "</p>";
+
+  const respuesta = await fetch("/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ mensaje: userText })
+  });
+
+  const data = await respuesta.json();
+  chat.innerHTML += "<p><b>Red Moon:</b> " + data.respuesta + "</p>";
+
+  input.value = "";
+}
+</script>
+
 </body>
 </html>
